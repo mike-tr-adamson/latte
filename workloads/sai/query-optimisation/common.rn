@@ -1,0 +1,98 @@
+use latte::*;
+
+pub const KEYSPACE = latte::param!("keyspace", "sai");
+pub const TABLE = latte::param!("table", "sai");
+
+// Total number of partitions in the table:
+pub const PARTITION_COUNT = latte::param!("partitions", 100000);
+
+pub const PARTITION_WIDTH = latte::param!("width", 1);
+
+pub const ROW_COUNT = PARTITION_COUNT * PARTITION_WIDTH;
+
+pub const CARDINALITY_DELTA = (ROW_COUNT / 9);
+pub const C1 = CARDINALITY_DELTA * 9;
+pub const C2 = CARDINALITY_DELTA * 6;
+pub const C3 = CARDINALITY_DELTA * 4;
+pub const C4 = CARDINALITY_DELTA * 2;
+pub const C5 = CARDINALITY_DELTA * 1;
+pub const C6 = CARDINALITY_DELTA / 2;
+pub const C7 = CARDINALITY_DELTA / 5;
+pub const C8 = CARDINALITY_DELTA / 20;
+pub const C9 = CARDINALITY_DELTA / 100;
+
+// Limit on the number of rows to fetch in a single query:
+pub const READ_SIZE = latte::param!("read_size", 10);
+
+const WRITE = "write";
+
+pub async fn init_schema(db) {
+    db.execute(`DROP TABLE IF EXISTS ${KEYSPACE}.${TABLE}`).await?;
+    db.execute(`
+        CREATE KEYSPACE IF NOT EXISTS ${KEYSPACE}
+            WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 }`).await?;
+    db.execute(`
+        CREATE TABLE IF NOT EXISTS ${KEYSPACE}.${TABLE} (
+            pk bigint,
+            ck int,
+            time timestamp,
+            c1 bigint,
+            c2 bigint,
+            c3 bigint,
+            c4 bigint,
+            c5 bigint,
+            c6 bigint,
+            c7 bigint,
+            c8 bigint,
+            c9 bigint,
+            PRIMARY KEY (pk, ck)
+        )`).await?;
+
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(time) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c1) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c2) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c3) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c4) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c5) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c6) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c7) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c8) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c9) USING 'StorageAttachedIndex'`).await?;
+    Ok(())
+}
+
+pub async fn erase(db) {
+    db.execute(`TRUNCATE TABLE ${KEYSPACE}.${TABLE}`).await?;
+    Ok(())
+}
+
+pub async fn prepare(db) {
+    db.load_cycle_count = PARTITION_COUNT;
+    db.prepare(WRITE,
+        `INSERT INTO ${KEYSPACE}.${TABLE}(pk, ck, time, c1, c2, c3, c4, c5, c6, c7, c8, c9)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).await?;
+    Ok(())
+}
+
+pub async fn insert_row(db, i) {
+    let pk = i;
+    let j = 0;
+    
+    while (j < PARTITION_WIDTH)
+    {
+        let ck = j.to_i32();
+        let time = ((i * PARTITION_WIDTH) + j) * 1000;
+        let c1 = hash2(((i * PARTITION_WIDTH) + j), 1) % C1;
+        let c2 = hash2(((i * PARTITION_WIDTH) + j), 2) % C2;
+        let c3 = hash2(((i * PARTITION_WIDTH) + j), 3) % C3;
+        let c4 = hash2(((i * PARTITION_WIDTH) + j), 4) % C4;
+        let c5 = hash2(((i * PARTITION_WIDTH) + j), 5) % C5;
+        let c6 = hash2(((i * PARTITION_WIDTH) + j), 6) % C6;
+        let c7 = hash2(((i * PARTITION_WIDTH) + j), 7) % C7;
+        let c8 = hash2(((i * PARTITION_WIDTH) + j), 8) % C8;
+        let c9 = hash2(((i * PARTITION_WIDTH) + j), 9) % C9;
+        db.execute_prepared(WRITE, [pk, ck, time, c1, c2, c3, c4, c5, c6, c7, c8, c9]).await?;
+        j = j + 1;
+    }
+    Ok(())
+}
