@@ -26,46 +26,6 @@ pub const READ_SIZE = latte::param!("read_size", 10);
 
 const WRITE = "write";
 
-pub async fn init_schema(db) {
-    db.execute(`DROP TABLE IF EXISTS ${KEYSPACE}.${TABLE}`).await?;
-    db.execute(`
-        CREATE KEYSPACE IF NOT EXISTS ${KEYSPACE}
-            WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 }`).await?;
-    db.execute(`
-        CREATE TABLE IF NOT EXISTS ${KEYSPACE}.${TABLE} (
-            pk bigint,
-            ck int,
-            time timestamp,
-            c1 bigint,
-            c2 bigint,
-            c3 bigint,
-            c4 bigint,
-            c5 bigint,
-            c6 bigint,
-            c7 bigint,
-            c8 bigint,
-            c9 bigint,
-            PRIMARY KEY (pk, ck)
-        )`).await?;
-
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(time) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c1) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c2) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c3) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c4) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c5) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c6) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c7) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c8) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ON ${KEYSPACE}.${TABLE}(c9) USING 'StorageAttachedIndex'`).await?;
-    Ok(())
-}
-
-pub async fn erase(db) {
-    db.execute(`TRUNCATE TABLE ${KEYSPACE}.${TABLE}`).await?;
-    Ok(())
-}
-
 pub async fn prepare(db) {
     db.load_cycle_count = PARTITION_COUNT;
     db.prepare(WRITE,
@@ -77,7 +37,7 @@ pub async fn prepare(db) {
 pub async fn insert_row(db, i) {
     let pk = i;
     let j = 0;
-    
+
     while (j < PARTITION_WIDTH)
     {
         let ck = j.to_i32();

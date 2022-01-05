@@ -1,0 +1,37 @@
+mod common;
+
+pub async fn schema(db) {
+    db.execute(`DROP TABLE IF EXISTS ${common::KEYSPACE}.${common::TABLE}`).await?;
+    db.execute(`
+        CREATE KEYSPACE IF NOT EXISTS ${common::KEYSPACE}
+            WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 }`).await?;
+    db.execute(`
+        CREATE TABLE IF NOT EXISTS ${common::KEYSPACE}.${common::TABLE} (
+            pk bigint,
+            ck int,
+            time timestamp,
+            c1 bigint,
+            c2 bigint,
+            c3 bigint,
+            c4 bigint,
+            c5 bigint,
+            c6 bigint,
+            c7 bigint,
+            c8 bigint,
+            c9 bigint,
+            PRIMARY KEY (pk, ck)
+        )`).await?;
+    Ok(())
+}
+
+pub async fn load(db, i) {
+    common::insert_row(db, i).await
+}
+
+pub async fn prepare(db) {
+    common::prepare(db).await?;
+}
+
+pub async fn run(db, i) {
+    common::insert_row(db, i).await
+}
