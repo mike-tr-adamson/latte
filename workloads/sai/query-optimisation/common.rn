@@ -1,8 +1,5 @@
 use latte::*;
 
-pub const KEYSPACE = latte::param!("keyspace", "sai");
-pub const TABLE = latte::param!("table", "sai");
-
 // Total number of partitions in the table:
 pub const PARTITION_COUNT = latte::param!("partitions", 100000);
 
@@ -23,6 +20,10 @@ pub const C9 = CARDINALITY_DELTA / 100;
 
 // Limit on the number of rows to fetch in a single query:
 pub const READ_SIZE = latte::param!("read_size", 10);
+
+const TABLE_HEADER = "w";
+pub const KEYSPACE = latte::param!("keyspace", "sai");
+pub const TABLE = latte::param!("table", `${TABLE_HEADER}${PARTITION_WIDTH}`);
 
 const WRITE = "write";
 
