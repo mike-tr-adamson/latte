@@ -1,5 +1,6 @@
 mod common;
-use common::{KEYSPACE, TABLE};
+use common::{KEYSPACE, TABLE, LIMIT};
+use latte::*;
 
 pub async fn prepare(db) {
     common::prepare(db).await?;
