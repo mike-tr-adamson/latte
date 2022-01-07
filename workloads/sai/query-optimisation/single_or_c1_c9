@@ -11,6 +11,6 @@ pub async fn prepare(db) {
 
 pub async fn run(db, i) {
     let c1 = hash2(i, 1) % C1;
-    let c2 = hash2(i, 2) % C9;
+    let c9 = hash2(i, 2) % C9;
     db.execute_prepared(READ, (c1, c9)).await
 }
