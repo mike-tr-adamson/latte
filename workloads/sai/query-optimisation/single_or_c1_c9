@@ -2,6 +2,8 @@ mod common;
 use common::{KEYSPACE, TABLE, LIMIT};
 use latte::*;
 
+const READ = "read";
+
 pub async fn prepare(db) {
     common::prepare(db).await?;
     db.prepare(READ, `SELECT * FROM ${KEYSPACE}.${TABLE} WHERE c1 = ? OR c9 = ? LIMIT ${LIMIT}`).await?;
