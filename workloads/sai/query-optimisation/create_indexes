@@ -1,5 +1,5 @@
 mod common;
-use {KEYSPACE, TABLE};
+use common::{KEYSPACE, TABLE};
 
 pub async fn schema(db) {
     db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_time_idx ON ${KEYSPACE}.${TABLE}(time) USING 'StorageAttachedIndex'`).await?;
@@ -13,11 +13,4 @@ pub async fn schema(db) {
     db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c8_idx ON ${KEYSPACE}.${TABLE}(c8) USING 'StorageAttachedIndex'`).await?;
     db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c9_idx ON ${KEYSPACE}.${TABLE}(c9) USING 'StorageAttachedIndex'`).await?;
     Ok(())
-}
-
-pub async fn prepare(db) {
-    db.load_cycle_count = 1;
-}
-
-pub async fn run(db, i) {
 }
