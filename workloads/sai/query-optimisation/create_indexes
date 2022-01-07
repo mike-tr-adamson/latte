@@ -1,16 +1,17 @@
 mod common;
+use {KEYSPACE, TABLE};
 
 pub async fn schema(db) {
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_time_idx ON ${common::KEYSPACE}.${common::TABLE}(time) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c1_idx ON ${common::KEYSPACE}.${common::TABLE}(c1) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c2_idx ON ${common::KEYSPACE}.${common::TABLE}(c2) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c3_idx ON ${common::KEYSPACE}.${common::TABLE}(c3) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c4_idx ON ${common::KEYSPACE}.${common::TABLE}(c4) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c5_idx ON ${common::KEYSPACE}.${common::TABLE}(c5) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c6_idx ON ${common::KEYSPACE}.${common::TABLE}(c6) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c7_idx ON ${common::KEYSPACE}.${common::TABLE}(c7) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c8_idx ON ${common::KEYSPACE}.${common::TABLE}(c8) USING 'StorageAttachedIndex'`).await?;
-    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${common::KEYSPACE}_${common::TABLE}_c9_idx ON ${common::KEYSPACE}.${common::TABLE}(c9) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_time_idx ON ${KEYSPACE}.${TABLE}(time) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c1_idx ON ${KEYSPACE}.${TABLE}(c1) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c2_idx ON ${KEYSPACE}.${TABLE}(c2) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c3_idx ON ${KEYSPACE}.${TABLE}(c3) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c4_idx ON ${KEYSPACE}.${TABLE}(c4) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c5_idx ON ${KEYSPACE}.${TABLE}(c5) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c6_idx ON ${KEYSPACE}.${TABLE}(c6) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c7_idx ON ${KEYSPACE}.${TABLE}(c7) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c8_idx ON ${KEYSPACE}.${TABLE}(c8) USING 'StorageAttachedIndex'`).await?;
+    db.execute(`CREATE CUSTOM INDEX IF NOT EXISTS ${KEYSPACE}_${TABLE}_c9_idx ON ${KEYSPACE}.${TABLE}(c9) USING 'StorageAttachedIndex'`).await?;
     Ok(())
 }
 

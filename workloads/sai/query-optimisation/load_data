@@ -1,12 +1,13 @@
 mod common;
+use common::{KEYSPACE, TABLE};
 
 pub async fn schema(db) {
-    db.execute(`DROP TABLE IF EXISTS ${common::KEYSPACE}.${common::TABLE}`).await?;
+    db.execute(`DROP TABLE IF EXISTS ${KEYSPACE}.${TABLE}`).await?;
     db.execute(`
-        CREATE KEYSPACE IF NOT EXISTS ${common::KEYSPACE}
+        CREATE KEYSPACE IF NOT EXISTS ${KEYSPACE}
             WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 }`).await?;
     db.execute(`
-        CREATE TABLE IF NOT EXISTS ${common::KEYSPACE}.${common::TABLE} (
+        CREATE TABLE IF NOT EXISTS ${KEYSPACE}.${TABLE} (
             pk bigint,
             ck int,
             time timestamp,

@@ -19,7 +19,7 @@ pub const C8 = CARDINALITY_DELTA / 20;
 pub const C9 = CARDINALITY_DELTA / 100;
 
 // Limit on the number of rows to fetch in a single query:
-pub const READ_SIZE = latte::param!("read_size", 10);
+pub const LIMIT = latte::param!("limit", 10);
 
 const TABLE_HEADER = "w";
 pub const KEYSPACE = latte::param!("keyspace", "sai");
